@@ -20,17 +20,27 @@ export class ViewUsersComponent {
   }
 
   loadUsers() {
-    this.users = this.userService.getUsers();
+    //this.users = this.userService.getUsers();
+    this.userService.getUsers().subscribe((data: User[]) => {
+      this.users = data;
+    });
   }
 
-  editUser(id: number) {
+  editUser(id: string) {
     this.router.navigate(['update-delete-users', id]);
   }
 
-  deleteUser(id: number) {
+  deleteUser(id: string | undefined) {
+    if (!id) {
+      console.error("User ID is undefined!");
+      return;
+    }
     if (confirm("Are you sure you want to delete this user?")) {
-      this.userService.deleteUser(id);
-      this.loadUsers(); // Refresh list
+      // this.userService.deleteUser(id);
+      // this.loadUsers(); // Refresh list
+      this.userService.deleteUser(id).subscribe(() => {
+      this.loadUsers(); // Refresh list after delete
+      });
     }
   }
 }
